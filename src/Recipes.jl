@@ -17,21 +17,21 @@ struct TraceEvent
     "Length of event in microseconds"
     duration::Microsecond
     "Correlation ID"
-    correlation_id::Int
+    correlation_id::Int64
     "Grid X value"
-    grid_x::Union{Int,Missing}
+    grid_x::Union{Int64,Missing}
     "Grid Y value"
-    grid_y::Union{Int,Missing}
+    grid_y::Union{Int64,Missing}
     "Grid Z value"
-    grid_z::Union{Int,Missing}
+    grid_z::Union{Int64,Missing}
     "Block X value"
-    block_x::Union{Int,Missing}
+    block_x::Union{Int64,Missing}
     "Block Y value"
-    block_y::Union{Int,Missing}
+    block_y::Union{Int64,Missing}
     "Block Z value"
-    block_z::Union{Int,Missing}
+    block_z::Union{Int64,Missing}
     "Registers per thread"
-    registers_per_thread::Union{Int,Missing}
+    registers_per_thread::Union{Int64,Missing}
     "Size of static shared memory"
     static_shared_memory::Union{String,Missing}
     "Size of dynamic shared memory"
@@ -47,11 +47,11 @@ struct TraceEvent
     "GPU device name and ID"
     device::String
     "Context ID"
-    context_id::Int
+    context_id::Int64
     "Green context ID"
     green_context::Union{String,Missing}
     "Stream ID"
-    stream_id::Int
+    stream_id::Int64
     "Trace event name"
     name::String
 end
@@ -80,9 +80,9 @@ function load_trace_csv(filepath)
         src_mem_kd = row.SrcMemKd
         dst_mem_kd = row.DstMemKd
         device = string(row.Device)
-        ctx = parse(Int, string(row.Ctx))
+        ctx = parse(Int64, string(row.Ctx))
         green_ctx = row.GreenCtx
-        strm = parse(Int, string(row.Strm))
+        strm = parse(Int64, string(row.Strm))
         name = string(row.Name)
         TraceEvent(
             start_ms,
