@@ -79,11 +79,11 @@ function load_trace_csv(filepath)
         throughput = row.Throughput
         src_mem_kd = row.SrcMemKd
         dst_mem_kd = row.DstMemKd
-        device = string(row.Device)
-        ctx = parse(Int64, string(row.Ctx))
+        device = row.Device
+        ctx = row.Ctx
         green_ctx = row.GreenCtx
-        strm = parse(Int64, string(row.Strm))
-        name = string(row.Name)
+        strm = row.Strm
+        name = row.Name
         TraceEvent(
             start_ms,
             duration_μs,
