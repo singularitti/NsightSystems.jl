@@ -58,7 +58,7 @@ end
 
 _uparse(str) = uparse(replace(str, " " => ""))
 
-function load_trace_csv(filepath::String)
+function load_trace_csv(filepath)
     df = CSV.read(filepath, DataFrame; missingstring="-")
     return map(eachrow(df)) do row
         start_ms = _uparse(row.Start)
