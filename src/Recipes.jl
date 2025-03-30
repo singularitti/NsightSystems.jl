@@ -5,7 +5,7 @@ using DataFrames: DataFrame, nrow
 using StructArrays: StructArray
 using Unitful: Quantity, dimension, uparse, ms, μs
 
-export load_trace_csv
+export end_time, load_trace_csv
 
 Millisecond = Quantity{Float64,dimension(ms),typeof(ms)}
 Microsecond = Quantity{Float64,dimension(μs),typeof(μs)}
@@ -55,6 +55,8 @@ struct TraceEvent
     "Trace event name"
     name::String
 end
+
+end_time(trace) = trace.start_time + trace.duration
 
 _uparse(str) = uparse(replace(str, " " => ""))
 
