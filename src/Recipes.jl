@@ -1,7 +1,6 @@
 module Recipes
 
 using CSV: CSV
-using DataFrames: DataFrame, nrow
 using StructArrays: StructArray
 using Unitful: Quantity, dimension, uparse, ms, μs
 
@@ -61,29 +60,31 @@ end_time(trace) = trace.start_time + trace.duration
 _uparse(str) = uparse(replace(str, " " => ""))
 
 function load_trace_csv(filepath)
-    df = CSV.read(filepath, DataFrame; missingstring="-")
-    return map(eachrow(df)) do row
-        start_ms = _uparse(row.Start)
-        duration_μs = _uparse(row.Duration)
-        corr_id = row.CorrId
-        grid_x = row.GrdX
-        grid_y = row.GrdY
-        grid_z = row.GrdZ
-        block_x = row.BlkX
-        block_y = row.BlkY
-        block_z = row.BlkZ
-        reg_per_trd = row["Reg/Trd"]
-        stc_smem = row.StcSMem
-        dym_smem = row.DymSMem
-        bytes = row.Bytes
-        throughput = row.Throughput
-        src_mem_kd = row.SrcMemKd
-        dst_mem_kd = row.DstMemKd
-        device = row.Device
-        ctx = row.Ctx
-        green_ctx = row.GreenCtx
-        strm = row.Strm
-        name = row.Name
+    vector = CSV.read(
+        filepath, StructArray; header=1, normalizenames=true, missingstring="-"
+    )
+    return map(vector) do element
+        start_ms = _uparse(element.Start)
+        duration_μs = _uparse(element.Duration)
+        corr_id = element.CorrId
+        grid_x = element.GrdX
+        grid_y = element.GrdY
+        grid_z = element.GrdZ
+        block_x = element.BlkX
+        block_y = element.BlkY
+        block_z = element.BlkZ
+        reg_per_trd = element.Reg_Trd  # The name has been normalized into a valid Julia identifier symbol
+        stc_smem = element.StcSMem
+        dym_smem = element.DymSMem
+        bytes = element.Bytes
+        throughput = element.Throughput
+        src_mem_kd = element.SrcMemKd
+        dst_mem_kd = element.DstMemKd
+        device = element.Device
+        ctx = element.Ctx
+        green_ctx = element.GreenCtx
+        strm = element.Strm
+        name = element.Name
         TraceEvent(
             start_ms,
             duration_μs,
