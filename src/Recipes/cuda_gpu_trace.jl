@@ -1,3 +1,5 @@
+export end_time, load_trace_csv
+
 "Represents a CUDA trace event with timing, resource, and execution details"
 struct TraceEvent
     "Start time of trace event in milliseconds"
@@ -45,8 +47,6 @@ struct TraceEvent
 end
 
 end_time(trace) = trace.start_time + trace.duration
-
-_uparse(str) = uparse(replace(str, " " => ""))
 
 function load_trace_csv(filepath)
     vector = CSV.read(
