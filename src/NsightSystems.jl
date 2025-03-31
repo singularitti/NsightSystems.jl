@@ -1,5 +1,5 @@
 module NsightSystems
 
-include("Recipes.jl")
+include("Recipes/Recipes.jl")
 
 end
