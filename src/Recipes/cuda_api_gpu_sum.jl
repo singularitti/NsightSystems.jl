@@ -46,18 +46,37 @@ function parse_category(str)
 end
 
 function load_summary_csv(filepath)
+    header = open(filepath) do file
+        readline(file)
+    end
+    # Check if headers have units in parentheses
+    has_units_in_header = occursin('(', header)
     vector = CSV.read(
-        filepath, StructArray; header=1, normalizenames=true, missingstring="-"
+        filepath, StructArray; header=1, normalizenames=false, missingstring="-"
     )
     return map(vector) do element
-        time_fraction = parse_percentage(element.Time)
-        total_time = _uparse(element.Total_Time)
-        instances = element.Instances
-        average_time = _uparse(element.Avg)
-        median_time = _uparse(element.Med)
-        min_time = _uparse(element.Min)
-        max_time = _uparse(element.Max)
-        std_dev = _uparse(element.StdDev)
+        if has_units_in_header
+            time_fraction = element[1] / 100  # Percentage
+            # Extract unit from header if present
+            # With units in header, values are plain numbers
+            total_time = element[2] * extract_unit(header, "Total Time")  # FIXME: using index is not always safe
+            instances = element.Instances
+            average_time = element[4] * extract_unit(header, "Avg")
+            median_time = element[5] * extract_unit(header, "Med")
+            min_time = element[6] * extract_unit(header, "Min")
+            max_time = element[7] * extract_unit(header, "Max")
+            std_dev = element[8] * extract_unit(header, "StdDev")
+        else
+            # Without units in header, values have inline units
+            time_fraction = parse_percentage(element.Time)
+            total_time = _uparse(element.Total_Time)
+            instances = element.Instances
+            average_time = _uparse(element.Avg)
+            median_time = _uparse(element.Med)
+            min_time = _uparse(element.Min)
+            max_time = _uparse(element.Max)
+            std_dev = _uparse(element.StdDev)
+        end
         category = parse_category(element.Category)
         operation = element.Operation
         Summary(
@@ -73,6 +92,14 @@ function load_summary_csv(filepath)
             operation,
         )
     end
+end
+
+function extract_unit(header, field)
+    m = match(Regex("$(field)\\s*\\((.*?)\\)"), header)
+    if isnothing(m)
+        error("Unit not found in \"$header\": $field")
+    end
+    return _uparse(m.captures[1])
 end
 
 is_time_consistent(summary::Summary) =
