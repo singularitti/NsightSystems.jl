@@ -1,4 +1,10 @@
-export load_summary_csv, is_time_consistent, check_total_time
+export CUDA_API,
+    CUDA_KERNEL,
+    MEMORY_OPER,
+    load_summary_csv,
+    is_time_consistent,
+    check_total_time,
+    get_total_time
 
 "CUDA operation categories from the summary data"
 @enum Category begin
@@ -112,3 +118,11 @@ function check_total_time(summary::Summary, rtol=0.01)
     diff_ratio = abs((expected - actual) / (actual))
     return diff_ratio <= rtol
 end
+
+function get_total_time(summary, category::Category)
+    filtered_summary = filter(item -> item.category == category, summary)
+    total_time = sum(item.total_time for item in _iter(filtered_summary))  # Works for `DataFrame`
+    return total_time
+end
+_iter(array::AbstractArray) = array
+_iter(dataframe) = eachrow(dataframe)
