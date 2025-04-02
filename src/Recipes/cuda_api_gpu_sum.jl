@@ -124,5 +124,11 @@ function get_total_time(summary, category::Category)
     total_time = sum(item.total_time for item in _iter(filtered_summary))  # Works for `DataFrame`
     return total_time
 end
+function get_total_time(summary, categories::AbstractArray{Category})
+    return sum(categories) do category
+        filtered_summary = filter(item -> item.category == category, summary)
+        sum(item.total_time for item in _iter(filtered_summary))
+    end
+end
 _iter(array::AbstractArray) = array
 _iter(dataframe) = eachrow(dataframe)
