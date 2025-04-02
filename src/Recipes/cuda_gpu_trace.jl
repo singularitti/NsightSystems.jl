@@ -43,7 +43,7 @@ struct TraceEvent
     "Stream ID"
     stream_id::Int64
     "Trace event name"
-    name::String
+    operation::String
 end
 
 end_time(trace) = trace.start_time + trace.duration
@@ -73,7 +73,7 @@ function load_trace_csv(filepath)
         ctx = element.Ctx
         green_ctx = element.GreenCtx
         strm = element.Strm
-        name = element.Name
+        operation = element.Name
         TraceEvent(
             start_ms,
             duration_μs,
@@ -95,7 +95,7 @@ function load_trace_csv(filepath)
             ctx,
             green_ctx,
             strm,
-            name,
+            operation,
         )
     end
 end
