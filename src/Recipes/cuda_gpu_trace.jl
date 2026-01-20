@@ -1,4 +1,6 @@
-export end_time, load_trace_csv
+using Tables: rows
+
+export end_time, load_trace
 
 "Represents a CUDA trace event with timing, resource, and execution details"
 struct TraceEvent
@@ -48,11 +50,8 @@ end
 
 end_time(trace) = trace.start_time + trace.duration
 
-function load_trace_csv(filepath)
-    vector = CSV.read(
-        filepath, StructArray; header=1, normalizenames=true, missingstring="-"
-    )
-    return map(vector) do element
+function load_trace(table)
+    return map(rows(table)) do element
         start_ms = _uparse(element.Start)
         duration_μs = _uparse(element.Duration)
         corr_id = element.CorrId
