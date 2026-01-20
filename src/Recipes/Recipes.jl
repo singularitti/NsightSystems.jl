@@ -1,7 +1,6 @@
 module Recipes
 
-using CSV: CSV
-using StructArrays: StructArray
+using Tables: rows
 using Unitful: Quantity, dimension, uparse, ms, μs, ns
 
 Millisecond = Quantity{Float64,dimension(ms),typeof(ms)}

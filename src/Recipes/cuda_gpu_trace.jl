@@ -1,5 +1,3 @@
-using Tables: rows
-
 export end_time, load_trace
 
 "Represents a CUDA trace event with timing, resource, and execution details"
