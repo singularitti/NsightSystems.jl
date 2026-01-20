@@ -11,7 +11,7 @@ Nanosecond = Quantity{Float64,dimension(ns),typeof(ns)}
 _uparse(str) = uparse(replace(str, " " => ""))
 
 include("cuda_gpu_trace.jl")
-include("cuda_api_gpu_sum.jl")
+include("cuda_gpu_sum.jl")
 include("show.jl")
 
 end

@@ -1,7 +1,11 @@
+# See /Applications/NVIDIA Nsight Systems.app/Contents/target-linux-x64/reports/cuda_gpu_sum.py
+
+using Tables: columnnames
+
 export CUDA_API,
     CUDA_KERNEL,
     MEMORY_OPER,
-    load_summary_csv,
+    load_summary,
     is_time_consistent,
     check_total_time,
     get_total_time
@@ -51,16 +55,11 @@ function parse_category(str)
     end
 end
 
-function load_summary_csv(filepath)
-    header = open(filepath) do file
-        readline(file)
-    end
+function load_summary(table)
+    header = columnnames(table)
     # Check if headers have units in parentheses
-    has_units_in_header = occursin('(', header)
-    vector = CSV.read(
-        filepath, StructArray; header=1, normalizenames=false, missingstring="-"
-    )
-    return map(vector) do element
+    has_units_in_header = any(@. occursin('(', string(header)))
+    return map(rows(table)) do element
         if has_units_in_header
             time_fraction = element[1] / 100  # Percentage
             # Extract unit from header if present
