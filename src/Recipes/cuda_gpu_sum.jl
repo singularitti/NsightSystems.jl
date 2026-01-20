@@ -1,6 +1,6 @@
 # See /Applications/NVIDIA Nsight Systems.app/Contents/target-linux-x64/reports/cuda_gpu_sum.py
 
-using Tables: columnnames
+using Tables: ByRow, columnnames
 
 export CUDA_API,
     CUDA_KERNEL,
@@ -119,15 +119,13 @@ function check_total_time(summary::Summary, rtol=0.01)
 end
 
 function get_total_time(summary, category::Category)
-    filtered_summary = filter(item -> item.category == category, summary)
-    total_time = sum(item.total_time for item in _iter(filtered_summary))  # Works for `DataFrame`
+    filtered_summary = filter(ByRow(item -> item.category == category), summary)
+    total_time = sum(item.total_time for item in filtered_summary)
     return total_time
 end
-function get_total_time(summary, categories::AbstractArray{Category})
+function get_total_time(summary, categories)
     return sum(categories) do category
-        filtered_summary = filter(item -> item.category == category, summary)
-        sum(item.total_time for item in _iter(filtered_summary))
+        filtered_summary = filter(ByRow(item -> item.category == category), summary)
+        sum(item.total_time for item in filtered_summary)
     end
 end
-_iter(array::AbstractArray) = array
-_iter(dataframe) = eachrow(dataframe)
